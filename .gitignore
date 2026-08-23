@@ -1,0 +1,6 @@
+venv/
+images/
+evidence.json
+comparison.json
+__pycache__/
+*.pyc
