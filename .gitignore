@@ -1,6 +1,16 @@
-venv/
-images/
-evidence.json
-comparison.json
+# Python
 __pycache__/
 *.pyc
+
+# Virtual environment
+venv/
+
+# Personal test images
+images/
+
+# Generated evidence
+evidence.json
+comparison.json
+
+# Generated reports
+reports/
