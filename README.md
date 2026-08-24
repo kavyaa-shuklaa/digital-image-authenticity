@@ -20,3 +20,27 @@ Evidence scoring,
 Automated PDF evidence reports.
 
 The project is currently under development.
+
+## Current Progress
+
+### Version 2 — Initial Forensic Analysis
+
+The project has now moved beyond basic metadata extraction and started looking at the actual characteristics of an image.
+
+So far, I've added:
+- SHA-256 hashing and image metadata extraction
+- EXIF and JPEG quantization analysis
+- Basic noise and spatial noise analysis
+- Initial Error Level Analysis (ELA)
+- Single-image forensic analysis
+- Image-to-image comparison
+- A findings layer that turns technical results into easier-to-understand explanations
+- Separate storage for detailed analysis and user-facing findings
+
+### Upcoming updates
+
+- Generate visual ELA maps
+- Start building the user interface
+- Generate a user-friendly forensic PDF report
+- Improve how image anomalies are detected and interpreted
+- Experiment with AI-based manipulation detection
