@@ -69,6 +69,7 @@ def analyze_image(filename):
             quantization_tables[str(table_id)] = table
 
         evidence["quantization_tables"] = quantization_tables
+
     else:
         evidence["quantization_tables_present"] = False
         evidence["quantization_tables"] = None
@@ -205,6 +206,7 @@ def generate_findings(evidence, forensic):
                 "or processing history."
             )
         })
+
     else:
         findings.append({
             "category": "Metadata",
@@ -240,21 +242,25 @@ def generate_findings(evidence, forensic):
             noise_variation_ratio = (
                 noise_max / noise_min
             )
+
         else:
             noise_variation_ratio = 0
 
         if noise_variation_ratio >= 3:
             noise_status = "review"
             noise_title = "Regional noise variation detected"
+
             noise_explanation = (
                 "Different regions of the image show "
                 "substantially different noise characteristics. "
                 "This may occur because of localized editing, "
                 "recompression, resizing, or other processing."
             )
+
         else:
             noise_status = "consistent"
             noise_title = "No strong regional noise variation detected"
+
             noise_explanation = (
                 "The measured noise characteristics do not show "
                 "a strong regional difference using the current "
@@ -304,6 +310,7 @@ def generate_findings(evidence, forensic):
                 "preserved as part of the technical evidence."
             )
         })
+
     else:
         findings.append({
             "category": "Compression",
@@ -316,6 +323,55 @@ def generate_findings(evidence, forensic):
         })
 
     return findings
+
+
+def print_analysis_summary(evidence, forensic, findings):
+    width, height = evidence["image_size"]
+
+    file_size_mb = (
+        evidence["file_size_bytes"] / (1024 * 1024)
+    )
+
+    print("\n--------------------------------")
+    print("IMAGE ANALYSIS SUMMARY")
+    print("--------------------------------")
+
+    print("Filename:", evidence["filename"])
+    print("Analysis ID:", evidence["analysis_id"])
+    print("Format:", evidence["image_format"])
+    print("Resolution:", width, "x", height)
+    print("File size:", round(file_size_mb, 2), "MB")
+
+    if evidence["exif"]:
+        print("EXIF metadata: Available")
+    else:
+        print("EXIF metadata: Not available")
+
+    noise_findings = [
+        finding
+        for finding in findings
+        if finding["category"] == "Noise"
+    ]
+
+    if noise_findings:
+        print(
+            "Noise assessment:",
+            noise_findings[0]["title"]
+        )
+
+    ela = forensic["ela_analysis"]
+
+    print(
+        "ELA mean difference:",
+        round(ela["ela_mean_difference"], 2)
+    )
+
+    if evidence["quantization_tables_present"]:
+        print("JPEG quantization: Available")
+    else:
+        print("JPEG quantization: Not available")
+
+    print("--------------------------------")
 
 
 def compare_images(evidence1, evidence2):
@@ -379,6 +435,7 @@ if not os.path.exists(image_folder):
     print("ERROR: The 'images' folder was not found.")
 
 else:
+
     for filename in os.listdir(image_folder):
 
         if filename.lower().endswith(
@@ -406,6 +463,12 @@ else:
             all_evidence[analysis_id] = evidence
             all_forensic_results[analysis_id] = forensic
             all_findings[analysis_id] = findings
+
+            print_analysis_summary(
+                evidence,
+                forensic,
+                findings
+            )
 
     with open("evidence.json", "w") as file:
         json.dump(
